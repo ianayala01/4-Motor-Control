@@ -5,11 +5,6 @@ int isAlive = 1;
 void Handler(int signo){
 
 	isAlive = 0;
-
-	park();
-	// free everything
-	gpioTerminate();
-	DEV_ModuleExit();
 }
 
 
@@ -28,7 +23,13 @@ int main(void){
 
 		zigFwd(5, 100);
 		zagFwd(5, 100);
-        }
 
+		zigBck(5, 100);
+		zagBck(5, 100);
+        }
+	park();
+	// free everything
+	gpioTerminate();
+	DEV_ModuleExit();
 	return 0;
 }

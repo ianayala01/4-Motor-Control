@@ -125,3 +125,19 @@ void zagFwd(int sec, uint16_t speed){
 	gpioDelay(sec * 1000000);
 	park();
 }
+
+// back and right
+void zigBck(int sec, uint16_t speed){
+	printf("car zigging backward!\n");
+	runMotor(2, BCK, speed);
+	gpioDelay(sec * 1000000);
+	park();
+}
+
+// back and left
+void zagBck(int sec, uint16_t speed){
+        printf("car zigging backward!\n");
+        runMotor(1, BCK, speed);
+        gpioDelay(sec * 1000000);
+        park();
+}

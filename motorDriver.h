@@ -34,6 +34,9 @@ void strafeLeft(int sec, uint16_t speed);
 void zigFwd(int sec, uint16_t speed);
 void zagFwd(int sec, uint16_t speed);
 
+void zigBck(int sec, uint16_t speed);
+void zagBck(int sec, uint16_t speed);
+
 void park();
 
 #endif
