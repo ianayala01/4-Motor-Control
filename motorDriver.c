@@ -35,6 +35,8 @@ void runMotor(int motorGroup, uint8_t direction, uint16_t speed){
 	// cap speed at 100%
 	if (speed > 100) speed = 100;
 
+	if (motorGroup == 1) speed = speed * SPEED_COEFF;
+
 	// speed is now duty cycle of the motor
 	PCA9685_SetPwmDutyCycle(motorPwm, speed);
 
@@ -71,7 +73,7 @@ void stopMotor(int motorGroup){
 void park(){
 	stopMotor(1);
 	stopMotor(2);
-	gpioDelay(2000000);
+	gpioDelay(5000);
 }
 
 void goFwd(int sec, uint16_t speed){
@@ -92,7 +94,7 @@ void goBck(int sec, uint16_t speed){
         park();
 }
 
-void strafeRight(int sec, uint16_t speed){
+void strafeLeft(int sec, uint16_t speed){
         printf("car going to the Right!\n");
         runMotor(1, FWD, speed);
         runMotor(2, BCK, speed);
@@ -101,7 +103,7 @@ void strafeRight(int sec, uint16_t speed){
         park();
 }
 
-void strafeLeft(int sec, uint16_t speed){
+void strafeRight(int sec, uint16_t speed){
         printf("car going to the Left!\n");
         runMotor(1, BCK, speed);
         runMotor(2, FWD, speed);
@@ -110,7 +112,7 @@ void strafeLeft(int sec, uint16_t speed){
         park();
 }
 
-// forward and right
+// forward and left
 void zigFwd(int sec, uint16_t speed){
 	printf("car zigging forward!\n");
 	runMotor(1, FWD, speed);
@@ -118,7 +120,7 @@ void zigFwd(int sec, uint16_t speed){
 	park();
 }
 
-// forward and left
+// forward and right
 void zagFwd(int sec, uint16_t speed){
 	printf("car zagging forward!\n");
 	runMotor(2, FWD, speed);
@@ -126,7 +128,7 @@ void zagFwd(int sec, uint16_t speed){
 	park();
 }
 
-// back and right
+// back and left
 void zigBck(int sec, uint16_t speed){
 	printf("car zigging backward!\n");
 	runMotor(2, BCK, speed);
@@ -134,10 +136,11 @@ void zigBck(int sec, uint16_t speed){
 	park();
 }
 
-// back and left
+// back and right
 void zagBck(int sec, uint16_t speed){
         printf("car zigging backward!\n");
         runMotor(1, BCK, speed);
         gpioDelay(sec * 1000000);
         park();
 }
+

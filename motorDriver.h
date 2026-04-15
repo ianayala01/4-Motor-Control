@@ -8,6 +8,7 @@
 #include <time.h>
 #include <pigpio.h>
 #include "PCA9685.h"
+#include <stdbool.h>
 
 #define FWD 1
 #define BCK 0
@@ -19,6 +20,8 @@
 #define MOTOR_PWMB PCA_CHANNEL_5
 #define MOTOR_IN1B PCA_CHANNEL_3
 #define MOTOR_IN2B PCA_CHANNEL_4
+
+#define SPEED_COEFF 1
 
 void initMotors();
 void runMotor(int motorGroup, uint8_t direction, uint16_t speed);
@@ -36,6 +39,8 @@ void zagFwd(int sec, uint16_t speed);
 
 void zigBck(int sec, uint16_t speed);
 void zagBck(int sec, uint16_t speed);
+
+void doDonut(int sec, uint16_t speed);
 
 void park();
 
