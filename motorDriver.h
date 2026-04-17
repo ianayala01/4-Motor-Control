@@ -13,6 +13,9 @@
 #define FWD 1
 #define BCK 0
 
+#define HAT1 0x40
+#define HAT2 0x45
+
 #define MOTOR_PWM PCA_CHANNEL_0
 #define MOTOR_IN1 PCA_CHANNEL_1
 #define MOTOR_IN2 PCA_CHANNEL_2
@@ -40,7 +43,12 @@ void zagFwd(int sec, uint16_t speed);
 void zigBck(int sec, uint16_t speed);
 void zagBck(int sec, uint16_t speed);
 
+void spinRight(int sec, uint16_t speed);
+void spinLeft(int sec, uint16_t speed);
+
 void doDonut(int sec, uint16_t speed);
+void donutReverse(int sec, uint16_t speed);
+void figEight(int laps, uint16_t speed);
 
 void park();
 

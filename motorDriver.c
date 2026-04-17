@@ -15,7 +15,7 @@ void initMotors(){
 
 // this function will be passed a speed and direction for the motor
 void runMotor(int motorGroup, uint8_t direction, uint16_t speed){
-	printf("running motor group %d\n", motorGroup);
+//	printf("running motor group %d\n", motorGroup);
 
 	int motorPwm;
 	int motorIn1;
@@ -42,7 +42,7 @@ void runMotor(int motorGroup, uint8_t direction, uint16_t speed){
 
 	// if direction is forward
 	if(direction == FWD){
-		printf("forward ");
+//		printf("forward ");
 		// turn motor to one direction
 		PCA9685_SetLevel(motorIn1, 0);
 		PCA9685_SetLevel(motorIn2, 1);
@@ -50,9 +50,9 @@ void runMotor(int motorGroup, uint8_t direction, uint16_t speed){
 		// turn motor to opposite direction
                 PCA9685_SetLevel(motorIn1, 1);
                 PCA9685_SetLevel(motorIn2, 0);
-		printf("backward ");
+//		printf("backward ");
 	}
-	printf("at %d percent speed\n", speed);
+//	printf("at %d percent speed\n", speed);
 }
 
 void stopMotor(int motorGroup){
@@ -65,21 +65,36 @@ void stopMotor(int motorGroup){
                 motorPwm = MOTOR_PWMB;
         }
 
-	printf("stopping motor\n");
+//	printf("stopping motor\n");
 	// duty cycle of zero means off
 	PCA9685_SetPwmDutyCycle(motorPwm, 0);
 }
 
 void park(){
+	printf("stopping\n");
+        PCA9685_Init(HAT1);
 	stopMotor(1);
 	stopMotor(2);
+
+        PCA9685_Init(HAT2);
+        stopMotor(1);
+        stopMotor(2);
+
 	gpioDelay(5000);
 }
 
 void goFwd(int sec, uint16_t speed){
 	printf("car going forward!\n");
+
+	PCA9685_Init(HAT1);
+        PCA9685_SetPWMFreq(100);
 	runMotor(1, FWD, speed);
 	runMotor(2, FWD, speed);
+
+        PCA9685_Init(HAT2);
+        PCA9685_SetPWMFreq(100);
+        runMotor(1, FWD, speed);
+        runMotor(2, FWD, speed);
 
 	gpioDelay(sec * 1000000);
 	park();
@@ -87,15 +102,24 @@ void goFwd(int sec, uint16_t speed){
 
 void goBck(int sec, uint16_t speed){
         printf("car going backward!\n");
+        PCA9685_Init(HAT1);
         runMotor(1, BCK, speed);
         runMotor(2, BCK, speed);
 
+        PCA9685_Init(HAT2);
+        runMotor(1, BCK, speed);
+        runMotor(2, BCK, speed);
         gpioDelay(sec * 1000000);
         park();
 }
 
 void strafeLeft(int sec, uint16_t speed){
         printf("car going to the Right!\n");
+        PCA9685_Init(HAT1);
+        runMotor(1, FWD, speed);
+        runMotor(2, BCK, speed);
+
+        PCA9685_Init(HAT2);
         runMotor(1, FWD, speed);
         runMotor(2, BCK, speed);
 
@@ -105,6 +129,11 @@ void strafeLeft(int sec, uint16_t speed){
 
 void strafeRight(int sec, uint16_t speed){
         printf("car going to the Left!\n");
+        PCA9685_Init(HAT1);
+        runMotor(1, BCK, speed);
+        runMotor(2, FWD, speed);
+
+        PCA9685_Init(HAT2);
         runMotor(1, BCK, speed);
         runMotor(2, FWD, speed);
 
@@ -115,7 +144,11 @@ void strafeRight(int sec, uint16_t speed){
 // forward and left
 void zigFwd(int sec, uint16_t speed){
 	printf("car zigging forward!\n");
+        PCA9685_Init(HAT1);
 	runMotor(1, FWD, speed);
+        PCA9685_Init(HAT2);
+        runMotor(1, FWD, speed);
+
 	gpioDelay(sec * 1000000);
 	park();
 }
@@ -123,7 +156,10 @@ void zigFwd(int sec, uint16_t speed){
 // forward and right
 void zagFwd(int sec, uint16_t speed){
 	printf("car zagging forward!\n");
+        PCA9685_Init(HAT1);
 	runMotor(2, FWD, speed);
+        PCA9685_Init(HAT2);
+        runMotor(2, FWD, speed);
 	gpioDelay(sec * 1000000);
 	park();
 }
@@ -131,7 +167,10 @@ void zagFwd(int sec, uint16_t speed){
 // back and left
 void zigBck(int sec, uint16_t speed){
 	printf("car zigging backward!\n");
+        PCA9685_Init(HAT1);
 	runMotor(2, BCK, speed);
+        PCA9685_Init(HAT2);
+        runMotor(2, BCK, speed);
 	gpioDelay(sec * 1000000);
 	park();
 }
@@ -139,8 +178,78 @@ void zigBck(int sec, uint16_t speed){
 // back and right
 void zagBck(int sec, uint16_t speed){
         printf("car zigging backward!\n");
+        PCA9685_Init(HAT1);
         runMotor(1, BCK, speed);
+        PCA9685_Init(HAT2);
+        runMotor(1, BCK, speed);
+
         gpioDelay(sec * 1000000);
         park();
 }
 
+void spinRight(int sec, uint16_t speed){
+	PCA9685_Init(HAT1);
+        runMotor(1, FWD, speed);
+        runMotor(2, BCK, speed);
+
+        PCA9685_Init(HAT2);
+        runMotor(1, BCK, speed);
+        runMotor(2, FWD, speed);
+
+        gpioDelay(sec * 1000000);
+        park();
+}
+
+void spinLeft(int sec, uint16_t speed){
+        PCA9685_Init(HAT1);
+        runMotor(1, BCK, speed);
+        runMotor(2, FWD, speed);
+
+        PCA9685_Init(HAT2);
+        runMotor(1, FWD, speed);
+        runMotor(2, BCK, speed);
+
+        gpioDelay(sec * 1000000);
+        park();
+}
+
+void doDonut(int sec, uint16_t speed){
+        printf("car going to the Left!\n");
+        PCA9685_Init(HAT1);
+        runMotor(1, BCK, speed/2);
+        runMotor(2, FWD, speed/2);
+
+        PCA9685_Init(HAT2);
+        runMotor(1, BCK, speed);
+        runMotor(2, FWD, speed);
+
+        gpioDelay(sec * 1000000);
+        park();
+}
+
+void donutReverse(int sec, uint16_t speed){
+        printf("car going to the Left!\n");
+        PCA9685_Init(HAT1);
+        runMotor(1, BCK, speed);
+        runMotor(2, FWD, speed);
+
+        PCA9685_Init(HAT2);
+        runMotor(1, BCK, speed/2);
+        runMotor(2, FWD, speed/2);
+
+        gpioDelay(sec * 1000000);
+        park();
+}
+
+void figEight(int laps, uint16_t speed){
+	printf("half nut\n");
+	doDonut(6, speed);
+
+	for(int i = 0; i < laps; i++){
+		printf("top of 8\n");
+		donutReverse(8, speed);
+		printf("bottom of 8\n");
+		doDonut(12, speed);
+	}
+	donutReverse(8, speed);
+}
