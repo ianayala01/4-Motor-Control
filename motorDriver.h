@@ -60,9 +60,9 @@ void zagBck(int sec, uint16_t speed);
 void spinRight(int sec, uint16_t speed);
 void spinLeft(int sec, uint16_t speed);
 
-void doDonut(int sec, uint16_t speed);
-void donutReverse(int sec, uint16_t speed);
-void figEight(int laps, uint16_t speed);
+void doDonut(int sec, uint16_t speed, double innerWheel);
+void donutReverse(int sec, uint16_t speed, double innerWheel);
+void figEight(int laps, uint16_t speed, double innerWheel);
 
 void park();
 
