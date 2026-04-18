@@ -1,5 +1,10 @@
 #include "motorDriver.h"
 
+Motor m1 = {1, HAT1, 2, MOTOR_PWM, MOTOR_IN1, MOTOR_IN2, SPEED_COEFF_1};
+Motor m2 = {2, HAT1, 1, MOTOR_PWMB, MOTOR_IN1B, MOTOR_IN2B, SPEED_COEFF_2};
+Motor m3 = {3, HAT2, 2, MOTOR_PWM, MOTOR_IN1, MOTOR_IN2, SPEED_COEFF_3};
+Motor m4 = {4, HAT2, 1, MOTOR_PWMB, MOTOR_IN1B, MOTOR_IN2B, SPEED_COEFF_4};
+
 void initMotors(){
 
 	// initialize pigpio library
@@ -14,28 +19,17 @@ void initMotors(){
 }
 
 // this function will be passed a speed and direction for the motor
-void runMotor(int motorGroup, uint8_t direction, uint16_t speed){
+void runMotor(Motor m, uint8_t direction, uint16_t speed){
 //	printf("running motor group %d\n", motorGroup);
 
-	int motorPwm;
-	int motorIn1;
-	int motorIn2;
-
-	if(motorGroup == 1){
-		motorPwm = MOTOR_PWM;
-		motorIn1 = MOTOR_IN1;
-		motorIn2 = MOTOR_IN2;
-	} else {
-		motorPwm = MOTOR_PWMB;
-		motorIn1 = MOTOR_IN1B;
-		motorIn2 = MOTOR_IN2B;
-	}
-
+	int motorPwm = m.pwm;
+	int motorIn1 = m.in1;
+	int motorIn2 = m.in2;
 
 	// cap speed at 100%
 	if (speed > 100) speed = 100;
 
-	if (motorGroup == 1) speed = speed * SPEED_COEFF;
+	speed = m.speedCoefficient * speed;
 
 	// speed is now duty cycle of the motor
 	PCA9685_SetPwmDutyCycle(motorPwm, speed);
@@ -55,16 +49,9 @@ void runMotor(int motorGroup, uint8_t direction, uint16_t speed){
 //	printf("at %d percent speed\n", speed);
 }
 
-void stopMotor(int motorGroup){
+void stopMotor(Motor m){
 
-        int motorPwm;
-
-        if(motorGroup == 1){
-                motorPwm = MOTOR_PWM;
-        } else {
-                motorPwm = MOTOR_PWMB;
-        }
-
+        int motorPwm = m.pwm;
 //	printf("stopping motor\n");
 	// duty cycle of zero means off
 	PCA9685_SetPwmDutyCycle(motorPwm, 0);
@@ -73,12 +60,12 @@ void stopMotor(int motorGroup){
 void park(){
 	printf("stopping\n");
         PCA9685_Init(HAT1);
-	stopMotor(1);
-	stopMotor(2);
+	stopMotor(m1);
+	stopMotor(m2);
 
         DEV_HARDWARE_I2C_setSlaveAddress(HAT2);
-        stopMotor(1);
-        stopMotor(2);
+        stopMotor(m3);
+        stopMotor(m4);
 
 	gpioDelay(5000);
 }
@@ -87,12 +74,12 @@ void goFwd(int sec, uint16_t speed){
 	printf("car going forward!\n");
 
         DEV_HARDWARE_I2C_setSlaveAddress(HAT1);
-	runMotor(1, FWD, speed);
-	runMotor(2, FWD, speed);
+	runMotor(m1, FWD, speed);
+	runMotor(m2, FWD, speed);
 
         DEV_HARDWARE_I2C_setSlaveAddress(HAT2);
-        runMotor(1, FWD, speed);
-        runMotor(2, FWD, speed);
+        runMotor(m1, FWD, speed);
+        runMotor(m2, FWD, speed);
 
 	gpioDelay(sec * 1000000);
 	park();
@@ -101,12 +88,12 @@ void goFwd(int sec, uint16_t speed){
 void goBck(int sec, uint16_t speed){
         printf("car going backward!\n");
         DEV_HARDWARE_I2C_setSlaveAddress(HAT1);
-        runMotor(1, BCK, speed);
-        runMotor(2, BCK, speed);
+        runMotor(m1, BCK, speed);
+        runMotor(m2, BCK, speed);
 
         DEV_HARDWARE_I2C_setSlaveAddress(HAT2);
-        runMotor(1, BCK, speed);
-        runMotor(2, BCK, speed);
+        runMotor(m1, BCK, speed);
+        runMotor(m2, BCK, speed);
         gpioDelay(sec * 1000000);
         park();
 }
@@ -114,12 +101,12 @@ void goBck(int sec, uint16_t speed){
 void strafeLeft(int sec, uint16_t speed){
         printf("car going to the Right!\n");
         DEV_HARDWARE_I2C_setSlaveAddress(HAT1);
-        runMotor(1, FWD, speed);
-        runMotor(2, BCK, speed);
+        runMotor(m1, BCK, speed);
+        runMotor(m2, FWD, speed);
 
         DEV_HARDWARE_I2C_setSlaveAddress(HAT2);
-        runMotor(1, FWD, speed);
-        runMotor(2, BCK, speed);
+        runMotor(m3, BCK, speed);
+        runMotor(m4, FWD, speed);
 
         gpioDelay(sec * 1000000);
         park();
@@ -128,12 +115,12 @@ void strafeLeft(int sec, uint16_t speed){
 void strafeRight(int sec, uint16_t speed){
         printf("car going to the Left!\n");
         DEV_HARDWARE_I2C_setSlaveAddress(HAT1);
-        runMotor(1, BCK, speed);
-        runMotor(2, FWD, speed);
+        runMotor(m1, FWD, speed);
+        runMotor(m2, BCK, speed);
 
         DEV_HARDWARE_I2C_setSlaveAddress(HAT2);
-        runMotor(1, BCK, speed);
-        runMotor(2, FWD, speed);
+        runMotor(m3, FWD, speed);
+        runMotor(m4, BCK, speed);
 
         gpioDelay(sec * 1000000);
         park();
@@ -143,9 +130,9 @@ void strafeRight(int sec, uint16_t speed){
 void zigFwd(int sec, uint16_t speed){
 	printf("car zigging forward!\n");
         DEV_HARDWARE_I2C_setSlaveAddress(HAT1);
-	runMotor(1, FWD, speed);
+	runMotor(m2, FWD, speed);
         DEV_HARDWARE_I2C_setSlaveAddress(HAT2);
-        runMotor(1, FWD, speed);
+        runMotor(m4, FWD, speed);
 
 	gpioDelay(sec * 1000000);
 	park();
@@ -155,9 +142,9 @@ void zigFwd(int sec, uint16_t speed){
 void zagFwd(int sec, uint16_t speed){
 	printf("car zagging forward!\n");
         DEV_HARDWARE_I2C_setSlaveAddress(HAT1);
-	runMotor(2, FWD, speed);
+	runMotor(m1, FWD, speed);
         DEV_HARDWARE_I2C_setSlaveAddress(HAT2);
-        runMotor(2, FWD, speed);
+        runMotor(m3, FWD, speed);
 	gpioDelay(sec * 1000000);
 	park();
 }
@@ -166,9 +153,9 @@ void zagFwd(int sec, uint16_t speed){
 void zigBck(int sec, uint16_t speed){
 	printf("car zigging backward!\n");
         DEV_HARDWARE_I2C_setSlaveAddress(HAT1);
-	runMotor(2, BCK, speed);
+	runMotor(m1, BCK, speed);
         DEV_HARDWARE_I2C_setSlaveAddress(HAT2);
-        runMotor(2, BCK, speed);
+        runMotor(m3, BCK, speed);
 	gpioDelay(sec * 1000000);
 	park();
 }
@@ -177,9 +164,9 @@ void zigBck(int sec, uint16_t speed){
 void zagBck(int sec, uint16_t speed){
         printf("car zigging backward!\n");
         DEV_HARDWARE_I2C_setSlaveAddress(HAT1);
-        runMotor(1, BCK, speed);
+        runMotor(m2, BCK, speed);
         DEV_HARDWARE_I2C_setSlaveAddress(HAT2);
-        runMotor(1, BCK, speed);
+        runMotor(m4, BCK, speed);
 
         gpioDelay(sec * 1000000);
         park();
@@ -187,12 +174,12 @@ void zagBck(int sec, uint16_t speed){
 
 void spinRight(int sec, uint16_t speed){
         DEV_HARDWARE_I2C_setSlaveAddress(HAT1);
-        runMotor(1, FWD, speed);
-        runMotor(2, BCK, speed);
+        runMotor(m1, BCK, speed);
+        runMotor(m2, FWD, speed);
 
         DEV_HARDWARE_I2C_setSlaveAddress(HAT2);
-        runMotor(1, BCK, speed);
-        runMotor(2, FWD, speed);
+        runMotor(m3, FWD, speed);
+        runMotor(m4, BCK, speed);
 
         gpioDelay(sec * 1000000);
         park();
@@ -200,12 +187,12 @@ void spinRight(int sec, uint16_t speed){
 
 void spinLeft(int sec, uint16_t speed){
         DEV_HARDWARE_I2C_setSlaveAddress(HAT1);
-        runMotor(1, BCK, speed);
-        runMotor(2, FWD, speed);
+        runMotor(m1, FWD, speed);
+        runMotor(m2, BCK, speed);
 
         DEV_HARDWARE_I2C_setSlaveAddress(HAT2);
-        runMotor(1, FWD, speed);
-        runMotor(2, BCK, speed);
+        runMotor(m3, BCK, speed);
+        runMotor(m4, FWD, speed);
 
         gpioDelay(sec * 1000000);
         park();
@@ -214,12 +201,12 @@ void spinLeft(int sec, uint16_t speed){
 void doDonut(int sec, uint16_t speed){
         printf("car going to the Left!\n");
         DEV_HARDWARE_I2C_setSlaveAddress(HAT1);
-        runMotor(1, BCK, speed/2);
-        runMotor(2, FWD, speed/2);
+        runMotor(m1, FWD, speed/2);
+        runMotor(m2, BCK, speed/2);
 
         DEV_HARDWARE_I2C_setSlaveAddress(HAT2);
-        runMotor(1, BCK, speed);
-        runMotor(2, FWD, speed);
+        runMotor(m3, FWD, speed);
+        runMotor(m4, BCK, speed);
 
         gpioDelay(sec * 1000000);
         park();
@@ -228,12 +215,12 @@ void doDonut(int sec, uint16_t speed){
 void donutReverse(int sec, uint16_t speed){
         printf("car going to the Left!\n");
         DEV_HARDWARE_I2C_setSlaveAddress(HAT1);
-        runMotor(1, BCK, speed);
-        runMotor(2, FWD, speed);
+        runMotor(m1, FWD, speed);
+        runMotor(m2, BCK, speed);
 
         DEV_HARDWARE_I2C_setSlaveAddress(HAT2);
-        runMotor(1, BCK, speed/2);
-        runMotor(2, FWD, speed/2);
+        runMotor(m3, FWD, speed/2);
+        runMotor(m4, BCK, speed/2);
 
         gpioDelay(sec * 1000000);
         park();

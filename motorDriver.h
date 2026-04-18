@@ -24,11 +24,25 @@
 #define MOTOR_IN1B PCA_CHANNEL_3
 #define MOTOR_IN2B PCA_CHANNEL_4
 
-#define SPEED_COEFF 1
+#define SPEED_COEFF_1 1
+#define SPEED_COEFF_2 .9448
+#define SPEED_COEFF_3 .9927
+#define SPEED_COEFF_4 .9716
+
+typedef struct {
+	int num;
+	int hat;
+	int idx;
+
+	int pwm;
+	int in1;
+	int in2;
+	double speedCoefficient;
+} Motor;
 
 void initMotors();
-void runMotor(int motorGroup, uint8_t direction, uint16_t speed);
-void stopMotor(int motorGroup);
+void runMotor(Motor m, uint8_t direction, uint16_t speed);
+void stopMotor(Motor m);
 
 // figure out how to calculate distance instead of using seconds
 void goFwd(int sec, uint16_t speed);
