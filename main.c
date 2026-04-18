@@ -15,22 +15,50 @@ int main(void){
 
 	// for ctrl + c
 	signal(SIGINT, Handler);
+/*
+	goFwd(100);
+	getHdg();
+	sleep(2);
 
-//	goFwd(2, 100);
-//	zigFwd(2, 100);
-//	strafeLeft(2, 100);
-//	zigBck(2, 100);
-//	goBck(2, 100);
-//	zagBck(2, 100);
-//	strafeRight(2, 100);
-//	zagFwd(2, 100);
+	park();
+	zigFwd(100);
+        getHdg();
+        sleep(2);
+
+	strafeLeft(100);
+        getHdg();
+        sleep(2);
+
+	park();
+	zigBck(100);
+        getHdg();
+        sleep(2);
+
+	goBck(100);
+        getHdg();
+        sleep(2);
+
+	park();
+	zagBck(100);
+        getHdg();
+        sleep(2);
+
+	strafeRight(100);
+        getHdg();
+        sleep(2);
+
+	park();
+	zagFwd(100);
+        getHdg();
+        sleep(2);
+*/
 
 //	spinRight(5, 100);
 //	spinLeft(5, 100);
 	doDonut(6, 100, .5);
 //	donutReverse(8, 100);
 //	figEight(1, 100);
-	spinRight(5, 100);
+//	spinRight(5, 100);
 
 	park();
 

@@ -40,25 +40,26 @@ typedef struct {
 	double speedCoefficient;
 } Motor;
 
+int getHdg();
 void initMotors();
 void runMotor(Motor m, uint8_t direction, uint16_t speed);
 void stopMotor(Motor m);
 
 // figure out how to calculate distance instead of using seconds
-void goFwd(int sec, uint16_t speed);
-void goBck(int sec, uint16_t speed);
+void goFwd(uint16_t speed);
+void goBck(uint16_t speed);
 
-void strafeRight(int sec, uint16_t speed);
-void strafeLeft(int sec, uint16_t speed);
+void strafeRight(uint16_t speed);
+void strafeLeft(uint16_t speed);
 
-void zigFwd(int sec, uint16_t speed);
-void zagFwd(int sec, uint16_t speed);
+void zigFwd(uint16_t speed);
+void zagFwd(uint16_t speed);
 
-void zigBck(int sec, uint16_t speed);
-void zagBck(int sec, uint16_t speed);
+void zigBck(uint16_t speed);
+void zagBck(uint16_t speed);
 
-void spinRight(int sec, uint16_t speed);
-void spinLeft(int sec, uint16_t speed);
+void spinRight(uint16_t speed);
+void spinLeft(uint16_t speed);
 
 void doDonut(int sec, uint16_t speed, double innerWheel);
 void donutReverse(int sec, uint16_t speed, double innerWheel);

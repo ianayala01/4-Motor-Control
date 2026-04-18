@@ -1,5 +1,8 @@
 #include "motorDriver.h"
 
+// keep track of where the car is moving (0-359)
+int currentHeading = -1; // negative to imply stopped
+
 Motor m1 = {1, HAT1, 2, MOTOR_PWM, MOTOR_IN1, MOTOR_IN2, SPEED_COEFF_1};
 Motor m2 = {2, HAT1, 1, MOTOR_PWMB, MOTOR_IN1B, MOTOR_IN2B, SPEED_COEFF_2};
 Motor m3 = {3, HAT2, 2, MOTOR_PWM, MOTOR_IN1, MOTOR_IN2, SPEED_COEFF_3};
@@ -67,10 +70,17 @@ void park(){
 	stopMotor(m3);
 	stopMotor(m4);
 
+	currentHeading = -1;
+
 	gpioDelay(5000);
 }
 
-void goFwd(int sec, uint16_t speed){
+int getHdg(){
+	printf("current heading is: %d\n", currentHeading);
+	return currentHeading;
+}
+
+void goFwd(uint16_t speed){
 	printf("car going forward!\n");
 
         DEV_HARDWARE_I2C_setSlaveAddress(HAT1);
@@ -81,11 +91,10 @@ void goFwd(int sec, uint16_t speed){
 	runMotor(m1, FWD, speed);
 	runMotor(m2, FWD, speed);
 
-	gpioDelay(sec * 1000000);
-	park();
+	currentHeading = 0;
 }
 
-void goBck(int sec, uint16_t speed){
+void goBck(uint16_t speed){
 	printf("car going backward!\n");
 	DEV_HARDWARE_I2C_setSlaveAddress(HAT1);
 	runMotor(m1, BCK, speed);
@@ -94,11 +103,11 @@ void goBck(int sec, uint16_t speed){
  	DEV_HARDWARE_I2C_setSlaveAddress(HAT2);
   	runMotor(m1, BCK, speed);
 	runMotor(m2, BCK, speed);
-	gpioDelay(sec * 1000000);
-	park();
+
+	currentHeading = 180;
 }
 
-void strafeLeft(int sec, uint16_t speed){
+void strafeLeft(uint16_t speed){
 	printf("car going to the Right!\n");
 	DEV_HARDWARE_I2C_setSlaveAddress(HAT1);
 	runMotor(m1, BCK, speed);
@@ -108,11 +117,10 @@ void strafeLeft(int sec, uint16_t speed){
 	runMotor(m3, BCK, speed);
 	runMotor(m4, FWD, speed);
 
-	gpioDelay(sec * 1000000);
-	park();
+	currentHeading = 270;
 }
 
-void strafeRight(int sec, uint16_t speed){
+void strafeRight(uint16_t speed){
 	printf("car going to the Left!\n");
 	DEV_HARDWARE_I2C_setSlaveAddress(HAT1);
 	runMotor(m1, FWD, speed);
@@ -122,57 +130,54 @@ void strafeRight(int sec, uint16_t speed){
 	runMotor(m3, FWD, speed);
 	runMotor(m4, BCK, speed);
 
-	gpioDelay(sec * 1000000);
-	park();
+	currentHeading = 90;
 }
 
 // forward and left
-void zigFwd(int sec, uint16_t speed){
+void zigFwd(uint16_t speed){
 	printf("car zigging forward!\n");
 	DEV_HARDWARE_I2C_setSlaveAddress(HAT1);
 	runMotor(m2, FWD, speed);
 	DEV_HARDWARE_I2C_setSlaveAddress(HAT2);
 	runMotor(m4, FWD, speed);
 
-	gpioDelay(sec * 1000000);
-	park();
+	currentHeading = 315;
 }
 
 // forward and right
-void zagFwd(int sec, uint16_t speed){
+void zagFwd(uint16_t speed){
 	printf("car zagging forward!\n");
 	DEV_HARDWARE_I2C_setSlaveAddress(HAT1);
 	runMotor(m1, FWD, speed);
 	DEV_HARDWARE_I2C_setSlaveAddress(HAT2);
 	runMotor(m3, FWD, speed);
-	gpioDelay(sec * 1000000);
-	park();
+
+	currentHeading = 45;
 }
 
 // back and left
-void zigBck(int sec, uint16_t speed){
+void zigBck(uint16_t speed){
 	printf("car zigging backward!\n");
 	DEV_HARDWARE_I2C_setSlaveAddress(HAT1);
 	runMotor(m1, BCK, speed);
 	DEV_HARDWARE_I2C_setSlaveAddress(HAT2);
 	runMotor(m3, BCK, speed);
-	gpioDelay(sec * 1000000);
-	park();
+
+	currentHeading = 225;
 }
 
 // back and right
-void zagBck(int sec, uint16_t speed){
+void zagBck(uint16_t speed){
 	printf("car zigging backward!\n");
 	DEV_HARDWARE_I2C_setSlaveAddress(HAT1);
 	runMotor(m2, BCK, speed);
 	DEV_HARDWARE_I2C_setSlaveAddress(HAT2);
 	runMotor(m4, BCK, speed);
 
-	gpioDelay(sec * 1000000);
-	park();
+	currentHeading = 135;
 }
 
-void spinRight(int sec, uint16_t speed){
+void spinRight(uint16_t speed){
 	printf("See ya later grandmas!\n");
 	DEV_HARDWARE_I2C_setSlaveAddress(HAT1);
 	runMotor(m1, BCK, speed);
@@ -181,12 +186,9 @@ void spinRight(int sec, uint16_t speed){
 	DEV_HARDWARE_I2C_setSlaveAddress(HAT2);
 	runMotor(m3, FWD, speed);
 	runMotor(m4, BCK, speed);
-
-	gpioDelay(sec * 1000000);
-	park();
 }
 
-void spinLeft(int sec, uint16_t speed){
+void spinLeft(uint16_t speed){
 	printf("car is spinning counter-clockwise!\n");
 	DEV_HARDWARE_I2C_setSlaveAddress(HAT1);
 	runMotor(m1, FWD, speed);
@@ -195,9 +197,6 @@ void spinLeft(int sec, uint16_t speed){
 	DEV_HARDWARE_I2C_setSlaveAddress(HAT2);
 	runMotor(m3, BCK, speed);
 	runMotor(m4, FWD, speed);
-
-	gpioDelay(sec * 1000000);
-	park();
 }
 
 void doDonut(int sec, uint16_t speed, double innerWheel){
@@ -214,7 +213,6 @@ void doDonut(int sec, uint16_t speed, double innerWheel){
 	runMotor(m4, BCK, speed);
 
 	gpioDelay(sec * 1000000);
-	park();
 }
 
 void donutReverse(int sec, uint16_t speed, double innerWheel){
@@ -231,7 +229,6 @@ void donutReverse(int sec, uint16_t speed, double innerWheel){
 	runMotor(m4, BCK, speed * innerWheel);
 
 	gpioDelay(sec * 1000000);
-	park();
 }
 
 void figEight(int laps, uint16_t speed, double innerWheel){
