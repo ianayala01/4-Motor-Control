@@ -5,8 +5,8 @@ int currentHeading = -1; // negative to imply stopped
 
 Motor m1 = {1, HAT1, 2, MOTOR_PWM, MOTOR_IN1, MOTOR_IN2, SPEED_COEFF_1};
 Motor m2 = {2, HAT1, 1, MOTOR_PWMB, MOTOR_IN1B, MOTOR_IN2B, SPEED_COEFF_2};
-Motor m3 = {3, HAT2, 2, MOTOR_PWM, MOTOR_IN1, MOTOR_IN2, SPEED_COEFF_3};
-Motor m4 = {4, HAT2, 1, MOTOR_PWMB, MOTOR_IN1B, MOTOR_IN2B, SPEED_COEFF_4};
+Motor m4 = {3, HAT2, 2, MOTOR_PWM, MOTOR_IN1, MOTOR_IN2, SPEED_COEFF_3};
+Motor m3 = {4, HAT2, 1, MOTOR_PWMB, MOTOR_IN1B, MOTOR_IN2B, SPEED_COEFF_4};
 
 void initMotors(){
 
@@ -17,13 +17,14 @@ void initMotors(){
 	// initialize DEV module
 	if(DEV_ModuleInit()) exit(0);
 	// more init
-        PCA9685_Init(0x40);
+	PCA9685_Init(0x40);
+        PCA9685_Init(0x45);
         PCA9685_SetPWMFreq(100);
 }
 
 // this function will be passed a speed and direction for the motor
 void runMotor(Motor m, uint8_t direction, uint16_t speed){
-//	printf("running motor group %d\n", motorGroup);
+	printf("running motor %d\n", m.num);
 
 	int motorPwm = m.pwm;
 	int motorIn1 = m.in1;
@@ -39,7 +40,7 @@ void runMotor(Motor m, uint8_t direction, uint16_t speed){
 
 	// if direction is forward
 	if(direction == FWD){
-//		printf("forward ");
+		printf("forward ");
 		// turn motor to one direction
 		PCA9685_SetLevel(motorIn1, 0);
 		PCA9685_SetLevel(motorIn2, 1);
@@ -47,9 +48,9 @@ void runMotor(Motor m, uint8_t direction, uint16_t speed){
 		// turn motor to opposite direction
                 PCA9685_SetLevel(motorIn1, 1);
                 PCA9685_SetLevel(motorIn2, 0);
-//		printf("backward ");
+		printf("backward ");
 	}
-//	printf("at %d percent speed\n", speed);
+	printf("at %d percent speed\n", speed);
 }
 
 void stopMotor(Motor m){
@@ -107,7 +108,7 @@ void goBck(uint16_t speed){
 	currentHeading = 180;
 }
 
-void strafeLeft(uint16_t speed){
+void strafeRight(uint16_t speed){
 	printf("car going to the Right!\n");
 	DEV_HARDWARE_I2C_setSlaveAddress(HAT1);
 	runMotor(m1, BCK, speed);
@@ -120,7 +121,7 @@ void strafeLeft(uint16_t speed){
 	currentHeading = 270;
 }
 
-void strafeRight(uint16_t speed){
+void strafeLeft(uint16_t speed){
 	printf("car going to the Left!\n");
 	DEV_HARDWARE_I2C_setSlaveAddress(HAT1);
 	runMotor(m1, FWD, speed);
@@ -199,22 +200,67 @@ void spinLeft(uint16_t speed){
 	runMotor(m4, FWD, speed);
 }
 
-void doDonut(int sec, uint16_t speed, double innerWheel){
+void doDonut(int radius, uint16_t speed){
 	printf("car is doing a donut!\n");
+
+	double top = ((radius * 2) - 4.5);
+	printf("top: %f\n", top);
+	double bottom = ((radius * 2) + 4.5);
+	printf("bottom: %f\n", bottom);
+
+	double innerWheel = top / bottom;
+
+	if (radius == 0) innerWheel = 0;
+
+	printf("innerWheel speed is %f of outter wheel\n", innerWheel);
+
+
 	if (innerWheel < 0) innerWheel = innerWheel * -1;
 	if (innerWheel > 1) innerWheel = 1;
 
 	DEV_HARDWARE_I2C_setSlaveAddress(HAT1);
-	runMotor(m1, FWD, speed * innerWheel);
-	runMotor(m2, BCK, speed * innerWheel);
+	runMotor(m1, BCK, speed * innerWheel);
+	runMotor(m2, FWD, speed * innerWheel);
 
 	DEV_HARDWARE_I2C_setSlaveAddress(HAT2);
-	runMotor(m3, FWD, speed);
-	runMotor(m4, BCK, speed);
+	runMotor(m3, BCK, speed);
+	runMotor(m4, FWD, speed);
 
-	gpioDelay(sec * 1000000);
+//	gpioDelay(sec * 1000000);
 }
 
+
+void donutReverse(int radius, uint16_t speed){
+        printf("car is doing a donut!\n");
+
+        double top = ((radius * 2) - 4.5);
+        printf("top: %f\n", top);
+        double bottom = ((radius * 2) + 4.5);
+        printf("bottom: %f\n", bottom);
+
+        double innerWheel = top / bottom;
+
+        if (radius == 0) innerWheel = 0;
+
+        printf("innerWheel speed is %f of outter wheel\n", innerWheel);
+
+
+        if (innerWheel < 0) innerWheel = innerWheel * -1;
+        if (innerWheel > 1) innerWheel = 1;
+
+        DEV_HARDWARE_I2C_setSlaveAddress(HAT1);
+        runMotor(m1, BCK, speed);
+        runMotor(m2, FWD, speed);
+
+        DEV_HARDWARE_I2C_setSlaveAddress(HAT2);
+        runMotor(m3, BCK, speed * innerWheel);
+        runMotor(m4, FWD, speed * innerWheel);
+
+//      gpioDelay(sec * 1000000);
+}
+
+
+/*
 void donutReverse(int sec, uint16_t speed, double innerWheel){
 	printf("car is doing reverse donut!\n");
 	if (innerWheel < 0) innerWheel = innerWheel * -1;
@@ -243,3 +289,4 @@ void figEight(int laps, uint16_t speed, double innerWheel){
 	}
 	donutReverse(8, speed, innerWheel);
 }
+*/
