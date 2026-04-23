@@ -21,7 +21,9 @@ int main(void){
 //	sleep(2);
 
 //	park();
-	zigFwd(100);
+
+	//forward-right
+//	zigFwd(100);
 //        getHdg();
 //        sleep(2);
 
@@ -43,7 +45,7 @@ int main(void){
 //        getHdg();
 //        sleep(2);
 
-//	strafeLeft(100);
+	strafeRight(100);
 //        getHdg();
 //        sleep(2);
 

@@ -5,8 +5,8 @@ int currentHeading = -1; // negative to imply stopped
 
 Motor m1 = {1, HAT1, 2, MOTOR_PWM, MOTOR_IN1, MOTOR_IN2, SPEED_COEFF_1};
 Motor m2 = {2, HAT1, 1, MOTOR_PWMB, MOTOR_IN1B, MOTOR_IN2B, SPEED_COEFF_2};
-Motor m4 = {3, HAT2, 2, MOTOR_PWM, MOTOR_IN1, MOTOR_IN2, SPEED_COEFF_3};
-Motor m3 = {4, HAT2, 1, MOTOR_PWMB, MOTOR_IN1B, MOTOR_IN2B, SPEED_COEFF_4};
+Motor m3 = {3, HAT2, 2, MOTOR_PWM, MOTOR_IN1, MOTOR_IN2, SPEED_COEFF_3};
+Motor m4 = {4, HAT2, 1, MOTOR_PWMB, MOTOR_IN1B, MOTOR_IN2B, SPEED_COEFF_4};
 
 void initMotors(){
 
