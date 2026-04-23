@@ -1,28 +1,34 @@
 #!/bin/bash
 
+# this script runs the motors to move the car into a specified direction
+# press ctrl + c between key presses. The script isn't smart enough to kill the current process
+# made this for testing purposes
+
 while true; do
-    # -n 1: Read only one character
-    # -s: Silent mode (don't echo the key pressed)
-    # -r: Do not allow backslashes to escape characters
+
     read -n 1 -s -r key
 
     case "$key" in
 
+	# press 8 to go forward
         8)
 		echo "Going Forward"
 		sudo ./fwd
 		;;
 
+	# press 7 to go diagonal: fwd/left
 	7)
 		echo "Going NW"
 		sudo ./fwdLeft
 		;;
 
+	# press 4 to go left
         4)
 		echo "Going Left"
 		sudo ./left
 		;;
 
+	# you get the idea...
 	1)
 		echo "Going SW"
 		sudo ./bckLeft

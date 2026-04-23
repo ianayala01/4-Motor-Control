@@ -32,6 +32,7 @@ int main(void){
 //        sleep(2);
 
 //	park();
+	// back-right
 //	zigBck(100);
 //        getHdg();
 //        sleep(2);
@@ -41,33 +42,28 @@ int main(void){
 //        sleep(2);
 
 //	park();
+	// back-left
 //	zagBck(100);
 //        getHdg();
 //        sleep(2);
 
-	strafeRight(100);
+//	strafeRight(100);
 //        getHdg();
 //        sleep(2);
 
 //	park();
+	// fwd-left
 //	zagFwd(100);
 //      getHdg();
 //        sleep(2);
 
-
-//	spinRight(100);
-//	spinLeft(100);
-//	gpioDelay(1300000);
 //	doDonut(5, 100);
-//	donutReverse(5, 100);
-//	figEight(1, 100);
 //	spinRight(5, 100);
+//	spinLeft(100);
 
 	while (isAlive){
 
 	}
-
-
 
 	park();
 
