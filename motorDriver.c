@@ -81,6 +81,24 @@ int getHdg(){
 	return currentHeading;
 }
 
+void veerLeft(){
+	printf("veering left!\n");
+        DEV_HARDWARE_I2C_setSlaveAddress(HAT1);
+	stopMotor(m1);
+
+	DEV_HARDWARE_I2C_setSlaveAddress(HAT2);
+	stopMotor(m3);
+}
+
+void veerRight(){
+	printf("veering right!\n");
+	DEV_HARDWARE_I2C_setSlaveAddress(HAT1);
+	stopMotor(m2);
+
+	DEV_HARDWARE_I2C_setSlaveAddress(HAT2);
+	stopMotor(m4);
+}
+
 void goFwd(uint16_t speed){
 	printf("car going forward!\n");
 

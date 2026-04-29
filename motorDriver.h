@@ -58,6 +58,9 @@ void zagFwd(uint16_t speed);
 void zigBck(uint16_t speed);
 void zagBck(uint16_t speed);
 
+void veerLeft();
+void veerRight();
+
 void spinRight(uint16_t speed);
 void spinLeft(uint16_t speed);
 
